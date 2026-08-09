@@ -1,5 +1,7 @@
 # ESP8266EX + PDI E2266FS092 Photo Display
 
+**English** | [简体中文](README.zh-CN.md)
+
 This firmware turns an ESP8266EX and PDI E2266FS092 2.66-inch tri-color
 e-paper panel into a Wi-Fi photo display. The browser decodes, crops, resizes, and
 converts each photo at the panel's native resolution. The default algorithm is
