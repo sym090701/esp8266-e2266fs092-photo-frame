@@ -1,0 +1,11 @@
+.DS_Store
+secrets.h
+*.bin
+*.elf
+*.map
+build/
+
+# Unused local artifacts from an earlier algorithm experiment.
+epdoptimize_js.h
+LICENSE.epdoptimize
+THIRD_PARTY_LICENSES.md
