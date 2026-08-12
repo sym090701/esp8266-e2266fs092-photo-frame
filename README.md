@@ -13,6 +13,19 @@ The ESP8266 receives only two packed 5,624-byte image planes.
 
 <img src="docs/web-ui.png" alt="Chinese mobile photo editor showing the four algorithm previews" width="390">
 
+The screenshot above shows the built-in editor and algorithm comparison strip.
+The firmware was also tested on the connected ESP8266EX + E2266FS092 hardware;
+the repository does not include device-specific flash images because compiled
+firmware can contain Wi-Fi and OTA credentials.
+
+## First release
+
+`v1.0.0` is the first public source release. It includes the browser editor,
+Waveshare dithering port, both original Floyd-Steinberg modes, local API/TCP
+control, authenticated OTA, mDNS, iPhone Shortcut handoff, and the calibrated
+mobile preview. Build a device-specific binary from `secrets.example.h` before
+flashing hardware.
+
 ## Highlights
 
 - Browser-side photo decode, crop, pinch zoom, rotation, resize, and dithering
@@ -61,6 +74,8 @@ arduino-cli compile \
 
 `secrets.h` and compiled firmware images are ignored by Git because firmware
 binaries contain the configured credentials.
+
+See [LICENSE](LICENSE) for the MIT license.
 
 ## Connect and upload
 
