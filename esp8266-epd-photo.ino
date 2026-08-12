@@ -137,7 +137,7 @@ h1{font-size:26px;line-height:1.2;margin:0;font-weight:750}
 .zoom-tools button{width:32px;min-height:32px;padding:0;font-size:18px;line-height:1}
 #zoomValue{width:48px;text-align:center;color:var(--muted);font-size:12px;font-weight:650;font-variant-numeric:tabular-nums}
 .stage{display:grid;place-items:center;min-height:76mm;padding:20px;overflow:hidden;background:var(--stage);background-image:linear-gradient(45deg,#dce5e3 25%,transparent 25%),linear-gradient(-45deg,#dce5e3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dce5e3 75%),linear-gradient(-45deg,transparent 75%,#dce5e3 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
-.screen{box-sizing:content-box;width:31mm;padding:4px;background:#1b2222;border:1px solid #0b1010;box-shadow:0 8px 18px #1520203d}
+.screen{box-sizing:content-box;width:30.9mm;padding:1px;background:#1b2222;border:0;box-shadow:0 8px 18px #1520203d}
 canvas{display:block;width:100%;height:auto;aspect-ratio:152/296;image-rendering:pixelated;background:#fff;cursor:grab;touch-action:none;user-select:none}
 canvas.dragging{cursor:grabbing}
 .controls{display:grid;gap:0;padding:0;overflow:hidden}
@@ -184,7 +184,7 @@ button.danger{background:#fff;color:var(--red);border-color:#e4a3a0}
 button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(--red)}
 .red{color:var(--red)}
 @media(max-width:760px){main{padding:18px 14px 28px}header{align-items:flex-start;margin-bottom:16px;padding-bottom:14px}h1{font-size:23px}.header-status{max-width:52%;padding-top:2px}.workspace{grid-template-columns:minmax(0,560px);gap:16px}.stage{min-height:74mm;padding:18px}.controls{overflow:visible}.control-section{padding:16px}.manual-settings{grid-template-columns:1fr}.manual-settings label:last-child{grid-column:auto}.upload-dock{position:sticky;bottom:10px;z-index:4;margin-top:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px #15202024}.comparison-list{margin-right:-2px}.compare-option{flex-basis:88px}}
-@media(max-width:390px){main{padding-inline:10px}.stage{padding:14px}.tool-grid,.calibration-settings,.actions{grid-template-columns:1fr}.screen{width:29mm}}
+@media(max-width:390px){main{padding-inline:10px}.stage{padding:14px}.tool-grid,.calibration-settings,.actions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -220,7 +220,7 @@ button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(-
         <label><input type="radio" name="fit" value="crop" checked>裁剪填满</label>
         <label><input type="radio" name="fit" value="contain">完整显示留白</label>
       </div>
-      <label class="preview-size">预览尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">100%</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
+      <label class="preview-size">实体尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">30.9 mm</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
       <div class="tool-grid">
         <button id="rotate" class="secondary" type="button" title="顺时针旋转照片">旋转 90 度</button>
         <button id="calibrationTarget" class="secondary" type="button" title="显示屏幕校准图">显示校准图</button>
@@ -323,11 +323,12 @@ function saveCalibrationProfile(){
 }
 loadCalibrationProfile();
 function applyPreviewScale(save=true){
-  const scale=value('previewScale');screen.style.width=31*scale/100+'mm';previewScaleValue.value=scale+'%';
-  if(save)try{localStorage.setItem('epdPreviewScale',scale)}catch(error){}
+  const scale=value('previewScale'),activeWidth=30.9*scale/100;
+  screen.style.width=activeWidth+'mm';previewScaleValue.value=activeWidth.toFixed(1)+' mm';
+  if(save)try{localStorage.setItem('epdPreviewScaleV2',scale)}catch(error){}
 }
 try{
-  const saved=Number(localStorage.getItem('epdPreviewScale'));
+  const saved=Number(localStorage.getItem('epdPreviewScaleV2'));
   if(saved>=60&&saved<=180)previewScale.value=saved;
 }catch(error){}
 applyPreviewScale(false);
