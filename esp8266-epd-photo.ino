@@ -119,53 +119,72 @@ const char PAGE[] PROGMEM = R"HTML(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>墨水屏照片</title>
 <style>
-:root{color-scheme:light;--ink:#181818;--muted:#666;--line:#d7d7d7;--red:#bf2e2e;--paper:#fff;--bg:#f3f4f5}
+:root{color-scheme:light;--ink:#182021;--muted:#687273;--line:#d7dddd;--line-strong:#b9c4c4;--red:#bd302f;--red-soft:#fff3f1;--paper:#ffffff;--bg:#f2f5f4;--stage:#e5ebea}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0}
-main{width:min(860px,100%);margin:0 auto;padding:20px 16px 32px}
-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
-h1{font-size:24px;line-height:1.2;margin:0;font-weight:700}
-.header-status{display:grid;justify-items:end;gap:3px}
-#status{font-size:13px;color:var(--muted);text-align:right}
-#deviceAddress{font-size:12px;color:var(--red);text-decoration:none}
-.workspace{display:grid;grid-template-columns:minmax(220px,310px) minmax(260px,1fr);gap:20px;align-items:start;justify-content:center}
-.preview{background:#fff;border:1px solid var(--line)}
-.preview-bar{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700}
-.zoom-tools{display:flex;align-items:center;gap:4px}
-.zoom-tools button{width:32px;min-height:30px;padding:0;font-size:18px;line-height:1}
-#zoomValue{width:50px;text-align:center;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
-.stage{display:grid;place-items:center;min-height:70mm;padding:12px;overflow:hidden;background:#e7e8e9}
-.screen{box-sizing:content-box;width:31mm;padding:3px;background:#242424;border:1px solid #050505;box-shadow:0 2px 6px #0004}
+main{width:min(1020px,100%);margin:0 auto;padding:28px 20px 48px}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 2px 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+h1{font-size:26px;line-height:1.2;margin:0;font-weight:750}
+.header-status{display:grid;justify-items:end;gap:4px;min-width:0}
+#status{font-size:13px;color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:270px}
+#deviceAddress{font-size:13px;color:var(--red);text-decoration:none;font-weight:650}
+#deviceAddress:hover{text-decoration:underline}
+.workspace{display:grid;grid-template-columns:minmax(310px,390px) minmax(340px,1fr);gap:24px;align-items:start}
+.preview,.controls{background:var(--paper);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 24px #1520200a}
+.preview{overflow:hidden}
+.preview-bar{display:flex;align-items:center;justify-content:space-between;min-height:50px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:14px;font-weight:720}
+.zoom-tools{display:flex;align-items:center;gap:5px}
+.zoom-tools button{width:32px;min-height:32px;padding:0;font-size:18px;line-height:1}
+#zoomValue{width:48px;text-align:center;color:var(--muted);font-size:12px;font-weight:650;font-variant-numeric:tabular-nums}
+.stage{display:grid;place-items:center;min-height:76mm;padding:20px;overflow:hidden;background:var(--stage);background-image:linear-gradient(45deg,#dce5e3 25%,transparent 25%),linear-gradient(-45deg,#dce5e3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#dce5e3 75%),linear-gradient(-45deg,transparent 75%,#dce5e3 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
+.screen{box-sizing:content-box;width:31mm;padding:4px;background:#1b2222;border:1px solid #0b1010;box-shadow:0 8px 18px #1520203d}
 canvas{display:block;width:100%;height:auto;aspect-ratio:152/296;image-rendering:pixelated;background:#fff;cursor:grab;touch-action:none;user-select:none}
 canvas.dragging{cursor:grabbing}
-.comparison{grid-column:1/-1;min-width:0}
-.comparison-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-size:13px;font-weight:600}
-.comparison-list{display:flex;gap:8px;overflow-x:auto;padding:0 0 5px;scroll-snap-type:x proximity}
-.compare-option{flex:0 0 92px;min-height:0;padding:7px 6px;background:#fff;color:var(--ink);border:1px solid var(--line);font-size:11px;line-height:1.25;scroll-snap-align:start}
-.compare-option[aria-pressed=true]{border:2px solid var(--red);padding:6px 5px;color:var(--red)}
-.compare-option canvas{width:54px;margin:0 auto 6px;border:1px solid var(--line);cursor:pointer;touch-action:auto}
-.controls{display:grid;gap:15px}
-label{display:grid;gap:7px;font-size:13px;font-weight:600}
+.controls{display:grid;gap:0;padding:0;overflow:hidden}
+.control-section{display:grid;gap:14px;padding:18px}
+.control-section+.control-section{border-top:1px solid var(--line)}
+.section-title{margin:0;color:var(--muted);font-size:11px;font-weight:760;line-height:1;text-transform:uppercase}
+label{display:grid;gap:7px;font-size:13px;font-weight:700}
 label:has(input:disabled){opacity:.42}
 [hidden]{display:none!important}
-input[type=file]{width:100%;font-size:13px}
-input[type=range]{width:100%;accent-color:var(--red)}
-select{width:100%;min-height:38px;border:1px solid var(--line);background:#fff;padding:7px 9px;font:inherit}
-.row{display:flex;justify-content:space-between;color:var(--muted);font-weight:400}
-.segments{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);background:#fff}
-.segments label{display:block;padding:9px 8px;text-align:center;cursor:pointer;font-weight:600}
+input[type=file]{width:100%;padding:8px;border:1px dashed var(--line-strong);border-radius:6px;background:#f8faf9;color:var(--muted);font:inherit;font-size:12px}
+input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
+select{width:100%;min-height:42px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;padding:8px 10px;color:var(--ink);font:inherit;font-size:14px}
+.row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:500}
+.segments{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-strong);border-radius:6px;overflow:hidden;background:#fff}
+.segments label{display:flex;align-items:center;justify-content:center;min-height:42px;padding:8px;text-align:center;cursor:pointer;font-size:13px;font-weight:700}
 .segments label+label{border-left:1px solid var(--line)}
 .segments input{position:absolute;opacity:0;pointer-events:none}
 .segments label:has(input:checked){background:var(--ink);color:#fff}
-button{border:0;background:var(--ink);color:#fff;min-height:42px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;border-radius:0}
-button:disabled{background:#aaa;cursor:not-allowed}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.calibration-settings{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);padding-top:13px}
+button{border:1px solid var(--ink);background:var(--ink);color:#fff;min-height:42px;padding:9px 14px;font:inherit;font-size:13px;font-weight:720;cursor:pointer;border-radius:6px;transition:background .16s,border-color .16s,transform .16s}
+button:hover:not(:disabled){background:#2c3738;border-color:#2c3738}
+button:active:not(:disabled){transform:translateY(1px)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #bd302f38;outline-offset:2px}
+button:disabled{background:#aeb7b7;border-color:#aeb7b7;cursor:not-allowed}
+.comparison{min-width:0}
+.comparison-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:13px;font-weight:720}
+#compareStatus{color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap}
+.comparison-list{display:flex;gap:8px;overflow-x:auto;padding:0 0 4px;scroll-snap-type:x proximity;scrollbar-color:var(--line-strong) transparent}
+.compare-option{display:grid;place-items:center;gap:5px;flex:0 0 92px;min-height:136px;padding:8px 6px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:11px;font-weight:650;line-height:1.25;scroll-snap-align:start}
+.compare-option:hover{background:#f8faf9;border-color:var(--line-strong)}
+.compare-option[aria-pressed=true]{border:2px solid var(--red);padding:7px 5px;color:var(--red);background:var(--red-soft)}
+.compare-option canvas{width:54px;margin:0;border:1px solid var(--line);cursor:pointer;touch-action:auto}
+.tool-grid,.calibration-settings{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.calibration-settings{gap:14px;padding-top:2px}
 .calibration-settings button{grid-column:1/-1}
-button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
-button.danger{background:#fff;color:var(--red);border:1px solid var(--red)}
+.manual-settings{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.manual-settings label:last-child{grid-column:1/-1}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.upload-dock{padding:14px 18px 18px;border-top:1px solid var(--line);background:#fbfcfc}
+.upload-dock button{width:100%;min-height:48px;background:var(--red);border-color:var(--red);font-size:14px}
+.upload-dock button:hover:not(:disabled){background:#a82424;border-color:#a82424}
+button.secondary{background:#fff;color:var(--ink);border-color:var(--line-strong)}
+button.secondary:hover:not(:disabled){background:#eef3f2;border-color:#9faaaa}
+button.danger{background:#fff;color:var(--red);border-color:#e4a3a0}
+button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(--red)}
 .red{color:var(--red)}
-@media(max-width:640px){main{padding:16px 12px 24px}.workspace{grid-template-columns:minmax(0,420px)}.controls{grid-template-columns:1fr 1fr}.file,.segments,.ratio,.algorithm,.preview-size,.comparison,.calibration-settings,.actions,button{grid-column:1/-1}.stage{min-height:68mm}.header-status{max-width:52%}}
+@media(max-width:760px){main{padding:18px 14px 28px}header{align-items:flex-start;margin-bottom:16px;padding-bottom:14px}h1{font-size:23px}.header-status{max-width:52%;padding-top:2px}.workspace{grid-template-columns:minmax(0,560px);gap:16px}.stage{min-height:74mm;padding:18px}.controls{overflow:visible}.control-section{padding:16px}.manual-settings{grid-template-columns:1fr}.manual-settings label:last-child{grid-column:auto}.upload-dock{position:sticky;bottom:10px;z-index:4;margin-top:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px #15202024}.comparison-list{margin-right:-2px}.compare-option{flex-basis:88px}}
+@media(max-width:390px){main{padding-inline:10px}.stage{padding:14px}.tool-grid,.calibration-settings,.actions{grid-template-columns:1fr}.screen{width:29mm}}
 </style>
 </head>
 <body>
@@ -177,34 +196,47 @@ button.danger{background:#fff;color:var(--red);border:1px solid var(--red)}
     <div class="stage"><div class="screen"><canvas id="preview" width="152" height="296"></canvas></div></div>
   </div>
   <div class="controls">
-    <label class="file">照片<input id="file" type="file" accept="image/*"></label>
-    <div class="segments">
-      <label><input type="radio" name="mode" value="tri" checked>黑白红</label>
-      <label><input type="radio" name="mode" value="mono">仅黑白</label>
-    </div>
-    <label class="ratio">画面比例
-      <select id="ratio">
-        <option value="screen">全屏</option>
-        <option value="source">原图比例</option>
-        <option value="1">方形 1:1</option>
-        <option value="0.75">竖版 3:4</option>
-        <option value="0.6666667">竖版 2:3</option>
-        <option value="0.5625">竖版 9:16</option>
-      </select>
-    </label>
-    <div class="segments">
-      <label><input type="radio" name="fit" value="crop" checked>裁剪填满</label>
-      <label><input type="radio" name="fit" value="contain">完整显示留白</label>
-    </div>
-    <label class="algorithm">图像算法
-      <select id="algorithm">
-        <option value="waveshare">微雪官方抖动（默认）</option>
-        <option value="floyd">Floyd–Steinberg（最初版）</option>
-        <option value="tri-floyd">三色 FS（最初版）</option>
-        <option value="auto-photo">黑白块面（实验）</option>
-      </select>
-    </label>
-    <div class="comparison">
+    <section class="control-section">
+      <p class="section-title">照片与色彩</p>
+      <label class="file">选择照片<input id="file" type="file" accept="image/*"></label>
+      <div class="segments">
+        <label><input type="radio" name="mode" value="tri" checked>黑白红</label>
+        <label><input type="radio" name="mode" value="mono">仅黑白</label>
+      </div>
+    </section>
+    <section class="control-section">
+      <p class="section-title">构图</p>
+      <label class="ratio">画面比例
+        <select id="ratio">
+          <option value="screen">全屏</option>
+          <option value="source">原图比例</option>
+          <option value="1">方形 1:1</option>
+          <option value="0.75">竖版 3:4</option>
+          <option value="0.6666667">竖版 2:3</option>
+          <option value="0.5625">竖版 9:16</option>
+        </select>
+      </label>
+      <div class="segments">
+        <label><input type="radio" name="fit" value="crop" checked>裁剪填满</label>
+        <label><input type="radio" name="fit" value="contain">完整显示留白</label>
+      </div>
+      <label class="preview-size">预览尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">100%</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
+      <div class="tool-grid">
+        <button id="rotate" class="secondary" type="button" title="顺时针旋转照片">旋转 90 度</button>
+        <button id="calibrationTarget" class="secondary" type="button" title="显示屏幕校准图">显示校准图</button>
+      </div>
+    </section>
+    <section class="control-section">
+      <p class="section-title">图像算法</p>
+      <label class="algorithm">抖动与量化方式
+        <select id="algorithm">
+          <option value="waveshare">微雪官方抖动（默认）</option>
+          <option value="floyd">Floyd–Steinberg（最初版）</option>
+          <option value="tri-floyd">三色 FS（最初版）</option>
+          <option value="auto-photo">黑白块面（实验）</option>
+        </select>
+      </label>
+      <div class="comparison">
       <div class="comparison-title"><span>四种效果对比</span><span id="compareStatus">选择照片后生成</span></div>
       <div class="comparison-list" id="algorithmCompare">
         <button class="compare-option" type="button" data-algorithm="waveshare" aria-pressed="true"><canvas width="152" height="296"></canvas><span>微雪官方</span></button>
@@ -212,26 +244,29 @@ button.danger{background:#fff;color:var(--red);border:1px solid var(--red)}
         <button class="compare-option" type="button" data-algorithm="tri-floyd" aria-pressed="false"><canvas width="152" height="296"></canvas><span>三色 FS</span></button>
         <button class="compare-option" type="button" data-algorithm="auto-photo" aria-pressed="false"><canvas width="152" height="296"></canvas><span>黑白块面</span></button>
       </div>
-    </div>
-    <label class="preview-size">预览尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">100%</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
-    <div class="actions">
-      <button id="rotate" class="secondary" type="button">旋转 90 度</button>
-      <button id="calibrationTarget" class="secondary" type="button">显示校准图</button>
-      <button id="clear" class="danger" type="button">清空屏幕</button>
-      <button id="ota" class="secondary" type="button">固件 OTA 更新</button>
-    </div>
-    <div class="calibration-settings">
-      <label>黑色校准 <span class="row"><span>少黑</span><output id="blackOffsetValue">0</output><span>多黑</span></span><input id="blackOffset" type="range" min="-30" max="30" value="0"></label>
-      <label class="red">红色校准 <span class="row"><span>少红</span><output id="redOffsetValue">0</output><span>多红</span></span><input id="redOffset" type="range" min="-30" max="30" value="0"></label>
-      <button id="resetCalibration" class="secondary" type="button">恢复本屏默认值</button>
-    </div>
-    <label class="manual-detail">亮度 <span class="row"><span>暗</span><output id="brightnessValue">0</output><span>亮</span></span><input id="brightness" type="range" min="-80" max="80" value="0"></label>
-    <label class="manual-detail">对比度 <span class="row"><span>柔和</span><output id="contrastValue">20</output><span>强烈</span></span><input id="contrast" type="range" min="-40" max="80" value="20"></label>
-    <label class="manual-detail">锐化 <span class="row"><span>自然</span><output id="sharpnessValue">80</output><span>清晰</span></span><input id="sharpness" type="range" min="0" max="180" value="80"></label>
-    <label class="manual-detail">边缘保留降噪 <span class="row"><span>保留纹理</span><output id="denoiseValue">0</output><span>更平滑</span></span><input id="denoise" type="range" min="0" max="100" value="0"></label>
-    <label class="manual-detail">黑场阈值 <span class="row"><span>少黑</span><output id="blackPointValue">145</output><span>多黑</span></span><input id="blackPoint" type="range" min="80" max="200" value="145"></label>
-    <label class="manual-detail red">红色灵敏度 <span class="row"><span>低</span><output id="redLevelValue">50</output><span>高</span></span><input id="redLevel" type="range" min="0" max="100" value="50"></label>
-    <button id="upload" disabled>上传到墨水屏</button>
+      </div>
+    </section>
+    <section class="control-section">
+      <p class="section-title">屏幕校准与手动调整</p>
+      <div class="calibration-settings">
+        <label>黑色校准 <span class="row"><span>少黑</span><output id="blackOffsetValue">0</output><span>多黑</span></span><input id="blackOffset" type="range" min="-30" max="30" value="0"></label>
+        <label class="red">红色校准 <span class="row"><span>少红</span><output id="redOffsetValue">0</output><span>多红</span></span><input id="redOffset" type="range" min="-30" max="30" value="0"></label>
+        <button id="resetCalibration" class="secondary" type="button">恢复本屏默认值</button>
+      </div>
+      <div class="manual-settings">
+        <label class="manual-detail">亮度 <span class="row"><span>暗</span><output id="brightnessValue">0</output><span>亮</span></span><input id="brightness" type="range" min="-80" max="80" value="0"></label>
+        <label class="manual-detail">对比度 <span class="row"><span>柔和</span><output id="contrastValue">20</output><span>强烈</span></span><input id="contrast" type="range" min="-40" max="80" value="20"></label>
+        <label class="manual-detail">锐化 <span class="row"><span>自然</span><output id="sharpnessValue">80</output><span>清晰</span></span><input id="sharpness" type="range" min="0" max="180" value="80"></label>
+        <label class="manual-detail">边缘保留降噪 <span class="row"><span>保留纹理</span><output id="denoiseValue">0</output><span>更平滑</span></span><input id="denoise" type="range" min="0" max="100" value="0"></label>
+        <label class="manual-detail">黑场阈值 <span class="row"><span>少黑</span><output id="blackPointValue">145</output><span>多黑</span></span><input id="blackPoint" type="range" min="80" max="200" value="145"></label>
+        <label class="manual-detail red">红色灵敏度 <span class="row"><span>低</span><output id="redLevelValue">50</output><span>高</span></span><input id="redLevel" type="range" min="0" max="100" value="50"></label>
+      </div>
+      <div class="actions">
+        <button id="clear" class="danger" type="button">清空屏幕</button>
+        <button id="ota" class="secondary" type="button">固件 OTA 更新</button>
+      </div>
+    </section>
+    <div class="upload-dock"><button id="upload" disabled>上传到墨水屏</button></div>
   </div>
 </div>
 </main>
