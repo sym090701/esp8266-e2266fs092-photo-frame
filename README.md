@@ -31,7 +31,7 @@ The ESP8266 receives only two packed 5,624-byte image planes.
 | Main controller | **Espressif ESP8266EX**, 4 MB flash; Arduino target: Generic ESP8266 Module |
 | E-paper panel | **Pervasive Displays (PDI) E2266FS092**, 2.66 inch, 296x152, black/white/red, 24-pin 0.5 mm FPC |
 | E-paper driver IC | **UC8253**, using the panel's factory OTP LUT |
-| Booster-current selector | **0.57R** for this panel; disconnect power before changing it |
+| Booster-current selector | **0.47R** for this panel; disconnect power before changing it |
 | Arduino core | ESP8266 Arduino Core 3.1.2 |
 
 The firmware uses the panel in portrait orientation, so the browser canvas is
@@ -74,8 +74,8 @@ binaries contain the configured credentials.
 4. Press **Upload to display** and wait for the completion status.
 
 If the configured Wi-Fi cannot be reached within 20 seconds, the device starts
-the fallback hotspot configured in `secrets.h` at `192.168.4.1`. Photo
-processing stays in the browser.
+the fallback hotspot configured in `secrets.h`. Open the address shown on the
+EPD; photo processing stays in the browser.
 
 ## Display behavior
 
@@ -162,9 +162,9 @@ TCP control also listens on port `8266`, one uppercase command per line:
 automation, so do not expose this port through router port forwarding.
 
 In station mode, mDNS advertises `epd-photo.local`, `_http._tcp` on port 80,
-and `_epd-photo._tcp` on port 8266. The fallback access-point address remains
-`192.168.4.1`; `.local` resolution is not guaranteed in fallback AP mode.
-`/api/status` reports `hostname` and whether mDNS started in the `mdns` field.
+and `_epd-photo._tcp` on port 8266. Open the address shown on the EPD in
+fallback AP mode; `.local` resolution is not guaranteed there. `/api/status`
+reports `hostname` and whether mDNS started in the `mdns` field.
 
 The web page's **Firmware OTA update** button opens `/update`. It uses the
 ESP8266 core's official HTTP OTA handler with HTTP Basic authentication. Use
@@ -186,10 +186,10 @@ waits for you to crop, zoom, rotate, or change the algorithm before pressing
 source is capped at about 850 KiB to fit the 1 MB LittleFS partition; for very
 large iPhone originals, resize and convert before the upload action.
 
-For the board's booster-current resistor selector, use `0.57R` with the
-E2266FS092 panel. Its panel reference circuit and the UC8253 booster reference
-both specify 0.47 ohm; 0.57 ohm is the matching available setting. Do not use
-`3R` for this panel. Change the selector only while power is disconnected.
+For the board's booster-current resistor selector, use `0.47R` with the
+E2266FS092 panel. This matches the panel reference circuit and the UC8253
+booster reference. Do not use `3R` for this panel. Change the selector only
+while power is disconnected.
 
 Pin mapping is unchanged from the text demo:
 
