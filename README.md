@@ -106,6 +106,8 @@ EPD; photo processing stays in the browser.
 - Manual rotation: 90-degree steps in the browser preview
 - Manual crop: drag to pan, pinch to zoom, or use a Mac trackpad to pan and
   pinch; the buttons provide zoom and recenter fallbacks
+- Editor controls are grouped into six collapsible sections. Each browser
+  remembers which sections were open after a reload.
 - Preview active area: 31x60 mm at 100%, with a 60%-180% per-browser
   calibration control for devices whose CSS physical units do not match reality
 - Image algorithms: **Waveshare official dithering**, **Floyd-Steinberg
