@@ -37,7 +37,7 @@ constexpr char SHORTCUT_SOURCE_PATH[] = "/shortcut.jpg";
 constexpr char SHORTCUT_SOURCE_TEMP_PATH[] = "/shortcut.tmp";
 constexpr char SCREEN_MARKER_PATH[] = "/epd-photo-v2";
 constexpr char FIRMWARE_VERSION[] =
-    "photo-api-ota-shortcut-4-compare-calibration-mdns";
+    "photo-api-ota-shortcut-4-compare-calibration-mdns-sections";
 constexpr size_t TCP_COMMAND_MAX_BYTES = 80;
 constexpr size_t SHORTCUT_SOURCE_MAX_BYTES = 850 * 1024;
 
@@ -141,9 +141,15 @@ h1{font-size:26px;line-height:1.2;margin:0;font-weight:750}
 canvas{display:block;width:100%;height:auto;aspect-ratio:152/296;image-rendering:pixelated;background:#fff;cursor:grab;touch-action:none;user-select:none}
 canvas.dragging{cursor:grabbing}
 .controls{display:grid;gap:0;padding:0;overflow:hidden}
-.control-section{display:grid;gap:14px;padding:18px}
+.control-section{padding:0}
 .control-section+.control-section{border-top:1px solid var(--line)}
-.section-title{margin:0;color:var(--muted);font-size:11px;font-weight:760;line-height:1;text-transform:uppercase}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin:0;padding:0 18px;color:var(--muted);font-size:12px;font-weight:760;line-height:1.25;cursor:pointer;list-style:none;user-select:none}
+.section-title::-webkit-details-marker{display:none}
+.section-title::after{content:"";flex:0 0 auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .16s ease}
+.control-section[open]>.section-title::after{transform:rotate(45deg)}
+.section-title:hover{color:var(--ink);background:#f8faf9}
+.section-title:focus-visible{outline:3px solid #bd302f38;outline-offset:-3px}
+.section-body{display:grid;gap:14px;padding:0 18px 18px}
 label{display:grid;gap:7px;font-size:13px;font-weight:700}
 label:has(input:disabled){opacity:.42}
 [hidden]{display:none!important}
@@ -183,7 +189,7 @@ button.secondary:hover:not(:disabled){background:#eef3f2;border-color:#9faaaa}
 button.danger{background:#fff;color:var(--red);border-color:#e4a3a0}
 button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(--red)}
 .red{color:var(--red)}
-@media(max-width:760px){main{padding:18px 14px 28px}header{align-items:flex-start;margin-bottom:16px;padding-bottom:14px}h1{font-size:23px}.header-status{max-width:52%;padding-top:2px}.workspace{grid-template-columns:minmax(0,560px);gap:16px}.stage{min-height:74mm;padding:18px}.controls{overflow:visible}.control-section{padding:16px}.manual-settings{grid-template-columns:1fr}.manual-settings label:last-child{grid-column:auto}.upload-dock{position:sticky;bottom:10px;z-index:4;margin-top:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px #15202024}.comparison-list{margin-right:-2px}.compare-option{flex-basis:88px}}
+@media(max-width:760px){main{padding:18px 14px 28px}header{align-items:flex-start;margin-bottom:16px;padding-bottom:14px}h1{font-size:23px}.header-status{max-width:52%;padding-top:2px}.workspace{grid-template-columns:minmax(0,560px);gap:16px}.stage{min-height:74mm;padding:18px}.controls{overflow:visible}.section-title{min-height:50px;padding-inline:16px}.section-body{padding:0 16px 16px}.manual-settings{grid-template-columns:1fr}.manual-settings label:last-child{grid-column:auto}.upload-dock{position:sticky;bottom:10px;z-index:4;margin-top:0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px #15202024}.comparison-list{margin-right:-2px}.compare-option{flex-basis:88px}}
 @media(max-width:390px){main{padding-inline:10px}.stage{padding:14px}.tool-grid,.calibration-settings,.actions{grid-template-columns:1fr}}
 </style>
 </head>
@@ -196,16 +202,19 @@ button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(-
     <div class="stage"><div class="screen"><canvas id="preview" width="152" height="296"></canvas></div></div>
   </div>
   <div class="controls">
-    <section class="control-section">
-      <p class="section-title">照片与色彩</p>
+    <details class="control-section" data-section="photo" open>
+      <summary class="section-title">照片与色彩</summary>
+      <div class="section-body">
       <label class="file">选择照片<input id="file" type="file" accept="image/*"></label>
       <div class="segments">
         <label><input type="radio" name="mode" value="tri" checked>黑白红</label>
         <label><input type="radio" name="mode" value="mono">仅黑白</label>
       </div>
-    </section>
-    <section class="control-section">
-      <p class="section-title">构图</p>
+      </div>
+    </details>
+    <details class="control-section" data-section="composition" open>
+      <summary class="section-title">构图</summary>
+      <div class="section-body">
       <label class="ratio">画面比例
         <select id="ratio">
           <option value="screen">全屏</option>
@@ -220,14 +229,12 @@ button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(-
         <label><input type="radio" name="fit" value="crop" checked>裁剪填满</label>
         <label><input type="radio" name="fit" value="contain">完整显示留白</label>
       </div>
-      <label class="preview-size">实体尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">30.9 mm</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
-      <div class="tool-grid">
-        <button id="rotate" class="secondary" type="button" title="顺时针旋转照片">旋转 90 度</button>
-        <button id="calibrationTarget" class="secondary" type="button" title="显示屏幕校准图">显示校准图</button>
+      <button id="rotate" class="secondary" type="button" title="顺时针旋转照片">旋转 90 度</button>
       </div>
-    </section>
-    <section class="control-section">
-      <p class="section-title">图像算法</p>
+    </details>
+    <details class="control-section" data-section="algorithm" open>
+      <summary class="section-title">图像算法与对比</summary>
+      <div class="section-body">
       <label class="algorithm">抖动与量化方式
         <select id="algorithm">
           <option value="waveshare">微雪官方抖动（默认）</option>
@@ -245,14 +252,23 @@ button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(-
         <button class="compare-option" type="button" data-algorithm="auto-photo" aria-pressed="false"><canvas width="152" height="296"></canvas><span>黑白块面</span></button>
       </div>
       </div>
-    </section>
-    <section class="control-section">
-      <p class="section-title">屏幕校准与手动调整</p>
+      </div>
+    </details>
+    <details class="control-section" data-section="calibration">
+      <summary class="section-title">屏幕校准</summary>
+      <div class="section-body">
+      <label class="preview-size">实体尺寸校准 <span class="row"><span>小</span><output id="previewScaleValue">30.9 mm</output><span>大</span></span><input id="previewScale" type="range" min="60" max="180" value="100"></label>
+      <button id="calibrationTarget" class="secondary" type="button" title="显示屏幕校准图">显示校准图</button>
       <div class="calibration-settings">
         <label>黑色校准 <span class="row"><span>少黑</span><output id="blackOffsetValue">0</output><span>多黑</span></span><input id="blackOffset" type="range" min="-30" max="30" value="0"></label>
         <label class="red">红色校准 <span class="row"><span>少红</span><output id="redOffsetValue">0</output><span>多红</span></span><input id="redOffset" type="range" min="-30" max="30" value="0"></label>
         <button id="resetCalibration" class="secondary" type="button">恢复本屏默认值</button>
       </div>
+      </div>
+    </details>
+    <details class="control-section" data-section="manual">
+      <summary class="section-title">手动图像调整</summary>
+      <div class="section-body">
       <div class="manual-settings">
         <label class="manual-detail">亮度 <span class="row"><span>暗</span><output id="brightnessValue">0</output><span>亮</span></span><input id="brightness" type="range" min="-80" max="80" value="0"></label>
         <label class="manual-detail">对比度 <span class="row"><span>柔和</span><output id="contrastValue">20</output><span>强烈</span></span><input id="contrast" type="range" min="-40" max="80" value="20"></label>
@@ -261,11 +277,17 @@ button.danger:hover:not(:disabled){background:var(--red-soft);border-color:var(-
         <label class="manual-detail">黑场阈值 <span class="row"><span>少黑</span><output id="blackPointValue">145</output><span>多黑</span></span><input id="blackPoint" type="range" min="80" max="200" value="145"></label>
         <label class="manual-detail red">红色灵敏度 <span class="row"><span>低</span><output id="redLevelValue">50</output><span>高</span></span><input id="redLevel" type="range" min="0" max="100" value="50"></label>
       </div>
+      </div>
+    </details>
+    <details class="control-section" data-section="device">
+      <summary class="section-title">设备操作</summary>
+      <div class="section-body">
       <div class="actions">
         <button id="clear" class="danger" type="button">清空屏幕</button>
         <button id="ota" class="secondary" type="button">固件 OTA 更新</button>
       </div>
-    </section>
+      </div>
+    </details>
     <div class="upload-dock"><button id="upload" disabled>上传到墨水屏</button></div>
   </div>
 </div>
@@ -290,6 +312,8 @@ const algorithmSelect=document.querySelector('#algorithm');
 const compareStatus=document.querySelector('#compareStatus');
 const compareButtons=[...document.querySelectorAll('.compare-option')];
 const calibrationTarget=document.querySelector('#calibrationTarget');
+const sectionStateKey='epdSectionsV1';
+const collapsibleSections=[...document.querySelectorAll('details[data-section]')];
 const scratch=document.createElement('canvas');
 const pointers=new Map();
 let source=null,photoSource=null,payload=null,rotation=0,renderPending=false,compareTimer=0,gesture=null,safariGestureZoom=1;
@@ -297,6 +321,18 @@ let calibrationMode=false;
 let edit={zoom:1,x:0,y:0};
 rotateButton.disabled=true;
 zoomButtons.forEach(button=>button.disabled=true);
+
+try{
+  const savedSections=JSON.parse(localStorage.getItem(sectionStateKey)||'{}');
+  collapsibleSections.forEach(section=>{
+    if(typeof savedSections[section.dataset.section]==='boolean')section.open=savedSections[section.dataset.section];
+  });
+}catch(error){}
+collapsibleSections.forEach(section=>section.addEventListener('toggle',()=>{
+  const state={};
+  collapsibleSections.forEach(item=>state[item.dataset.section]=item.open);
+  try{localStorage.setItem(sectionStateKey,JSON.stringify(state))}catch(error){}
+}));
 
 function value(id){return Number(document.querySelector('#'+id).value)}
 function clamp(v){return Math.max(0,Math.min(255,v))}
